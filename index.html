@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jifford GameShow</title>
+
 <style>
   body { 
     font-family: Arial, sans-serif; 
@@ -14,14 +15,18 @@
     min-height: 100vh; 
     padding: 20px;
   }
+
   #game { 
     max-width: 500px; 
+    width: 100%;
     text-align: center; 
     background: #fff; 
     padding: 20px; 
     border-radius: 15px; 
     box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+    position: relative;
   }
+
   button { 
     padding: 10px 25px; 
     margin: 10px; 
@@ -30,89 +35,19 @@
     font-size: 16px; 
     cursor: pointer; 
   }
+
   #yes { background-color: #4CAF50; color: white; }
-  #no { background-color: #f44336; color: white; }
-  #arrow { width: 50px; display: none; margin-top: 10px; }
+  #no  { background-color: #f44336; color: white; }
 </style>
 </head>
+
 <body>
 <div id="game">
-  <h2 id="question">Welcome to Jifford GameShow! 🎉<br>Are you ready?</h2>
-  <div id="buttons">
-    <button id="yes">Yes</button>
-    <button id="no">No</button>
-  </div>
-  <img id="arrow" src="https://i.imgur.com/7yD3M7H.png" alt="Arrow pointing to Yes">
-</div>
+  <h2 id="question">
+    Welcome to Jifford GameShow! 🎉<br>
+    Are you ready?
+  </h2>
 
-<script>
-const questionEl = document.getElementById('question');
-const yesBtn = document.getElementById('yes');
-const noBtn = document.getElementById('no');
-const arrow = document.getElementById('arrow');
-
-let currentKey = "welcome";
-let noClicks = 0;
-
-// Story data
-const story = {
-  "welcome": {yes:"q2a", no:"q2b"},
-  "q2a": {text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b"},
-  "q2b": {text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d"},
-  "q3a": {text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"q4a", no:"q4b"},
-  "q3b": {text:"Did you avoid doing something today on purpose? 🤭", yes:"q4c", no:"q4d"},
-  "q3c": {text:"Have you ever pretended to be busy just to avoid chores or homework? 😎", yes:"q4e", no:"q4f"},
-  "q3d": {text:"Did you stay honest and finish everything you planned? 💪", yes:"q4g", no:"q4h"},
-  "q4a": {text:"Ever opened the fridge and forgot what you wanted? 🥲", yes:"q5a", no:"q5a"},
-  "q4b": {text:"Ever forgotten what you were going to say? 😆", yes:"q5b", no:"q5b"},
-  "q4c": {text:"Did you ever forget your own password? 🤭", yes:"q5c", no:"q5c"},
-  "q4d": {text:"Ever walked into a classroom and forgot your homework? 📚", yes:"q5d", no:"q5d"},
-  "q4e": {text:"Ever walked into a room and just stood there? 😅", yes:"q5e", no:"q5e"},
-  "q4f": {text:"Did you ever forget a friend’s birthday? 🎂", yes:"q5f", no:"q5f"},
-  "q4g": {text:"Ever walked into a room and forgot why you went there? 🤔", yes:"q5g", no:"q5g"},
-  "q4h": {text:"Ever opened a tab and forgot why? 💻", yes:"q5h", no:"q5h"},
-  "q5a": {text:"Do you miss someone from the past?", yes:"6a", no:"6a"},
-  "q5b": {text:"Do you ever think about<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jifford GameShow</title>
-<style>
-  body { 
-    font-family: Arial, sans-serif; 
-    background: #fdf6f0; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh; 
-    padding: 20px;
-  }
-  #game { 
-    max-width: 500px; 
-    text-align: center; 
-    background: #fff; 
-    padding: 20px; 
-    border-radius: 15px; 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
-    position: relative;
-  }
-  button { 
-    padding: 10px 25px; 
-    margin: 10px; 
-    border: none; 
-    border-radius: 8px; 
-    font-size: 16px; 
-    cursor: pointer; 
-    position: relative;
-  }
-  #yes { background-color: #4CAF50; color: white; }
-  #no { background-color: #f44336; color: white; }
-</style>
-</head>
-<body>
-<div id="game">
-  <h2 id="question">Welcome to Jifford GameShow! 🎉<br>Are you ready?</h2>
   <div id="buttons">
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -120,85 +55,87 @@ const story = {
 </div>
 
 <script>
-const questionEl = document.getElementById('question');
-const yesBtn = document.getElementById('yes');
-const noBtn = document.getElementById('no');
+const questionEl = document.getElementById("question");
+const yesBtn = document.getElementById("yes");
+const noBtn  = document.getElementById("no");
 
 let currentKey = "welcome";
 let noClicks = 0;
 
-// Story data
+// STORY DATA
 const story = {
-  "welcome": {yes:"q2a", no:"q2b"},
-  "q2a": {text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b"},
-  "q2b": {text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d"},
-  "q3a": {text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"q4a", no:"q4b"},
-  "q3b": {text:"Did you avoid doing something today on purpose? 🤭", yes:"q4c", no:"q4d"},
-  "q3c": {text:"Have you ever pretended to be busy just to avoid chores or homework? 😎", yes:"q4e", no:"q4f"},
-  "q3d": {text:"Did you stay honest and finish everything you planned? 💪", yes:"q4g", no:"q4h"},
-  "q4a": {text:"Ever opened the fridge and forgot what you wanted? 🥲", yes:"q5a", no:"q5a"},
-  "q4b": {text:"Ever forgotten what you were going to say? 😆", yes:"q5b", no:"q5b"},
-  "q4c": {text:"Did you ever forget your own password? 🤭", yes:"q5c", no:"q5c"},
-  "q4d": {text:"Ever walked into a classroom and forgot your homework? 📚", yes:"q5d", no:"q5d"},
-  "q4e": {text:"Ever walked into a room and just stood there? 😅", yes:"q5e", no:"q5e"},
-  "q4f": {text:"Did you ever forget a friend’s birthday? 🎂", yes:"q5f", no:"q5f"},
-  "q4g": {text:"Ever walked into a room and forgot why you went there? 🤔", yes:"q5g", no:"q5g"},
-  "q4h": {text:"Ever opened a tab and forgot why? 💻", yes:"q5h", no:"q5h"},
-  "q5a": {text:"Do you miss someone from the past?", yes:"6a", no:"6a"},
-  "q5b": {text:"Do you ever think about old friends?", yes:"6b", no:"6b"},
-  "q5c": {text:"Have you ever fallen in love with someone who loved someone else? 💔", yes:"6c", no:"6c"},
-  "q5d": {text:"Do you wish you were more prepared?", yes:"6d", no:"6d"},
-  "q5e": {text:"Have you ever experienced true love that just wasn’t meant to be? 💔", yes:"6e", no:"6e"},
-  "q5f": {text:"Do you regret missing any special moments?", yes:"6f", no:"6f"},
-  "q5g": {text:"Do you think about old memories?", yes:"6g", no:"6g"},
-  "q5h": {text:"Are you happy you’re single now?", yes:"6h", no:"6h"},
-  "6a": {text:"Being honest about feelings is brave! 💖", end:true},
-  "6b": {text:"Thinking of friends shows you care! 😊", end:true},
-  "6c": {text:"Pinagtagpo pero di itinadhana 💔", end:true},
-  "6d": {text:"Learning from the past makes you wiser! 📘", end:true},
-  "6e": {text:"Destiny brought us together once, but it was never meant to be 💔", end:true},
-  "6f": {text:"Don’t worry, there’s still time for new memories! 🎉", end:true},
-  "6g": {text:"Looking back is natural, keep smiling! 😄", end:true},
-  "6h": {text:"Enjoying your single life is a blessing! 🌟", end:true}
+  q2a:{ text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b" },
+  q2b:{ text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d" },
+
+  q3a:{ text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"q4a", no:"q4b" },
+  q3b:{ text:"Did you avoid doing something today on purpose? 🤭", yes:"q4c", no:"q4d" },
+  q3c:{ text:"Have you ever pretended to be busy just to avoid chores or homework? 😎", yes:"q4e", no:"q4f" },
+  q3d:{ text:"Did you stay honest and finish everything you planned? 💪", yes:"q4g", no:"q4h" },
+
+  q4a:{ text:"Ever opened the fridge and forgot what you wanted? 🥲", yes:"q5a", no:"q5a" },
+  q4b:{ text:"Ever forgotten what you were going to say? 😆", yes:"q5b", no:"q5b" },
+  q4c:{ text:"Did you ever forget your own password? 🤭", yes:"q5c", no:"q5c" },
+  q4d:{ text:"Ever walked into a classroom and forgot your homework? 📚", yes:"q5d", no:"q5d" },
+  q4e:{ text:"Ever walked into a room and just stood there? 😅", yes:"q5e", no:"q5e" },
+  q4f:{ text:"Did you ever forget a friend’s birthday? 🎂", yes:"q5f", no:"q5f" },
+  q4g:{ text:"Ever walked into a room and forgot why you went there? 🤔", yes:"q5g", no:"q5g" },
+  q4h:{ text:"Ever opened a tab and forgot why? 💻", yes:"q5h", no:"q5h" },
+
+  q5a:{ text:"Do you miss someone from the past?", yes:"6a", no:"6a" },
+  q5b:{ text:"Do you ever think about old friends?", yes:"6b", no:"6b" },
+  q5c:{ text:"Have you ever fallen in love with someone who loved someone else? 💔", yes:"6c", no:"6c" },
+  q5d:{ text:"Do you wish you were more prepared?", yes:"6d", no:"6d" },
+  q5e:{ text:"Have you ever experienced true love that just wasn’t meant to be? 💔", yes:"6e", no:"6e" },
+  q5f:{ text:"Do you regret missing any special moments?", yes:"6f", no:"6f" },
+  q5g:{ text:"Do you think about old memories?", yes:"6g", no:"6g" },
+  q5h:{ text:"Are you happy you’re single now?", yes:"6h", no:"6h" },
+
+  "6a":{ text:"Being honest about feelings is brave! 💖", end:true },
+  "6b":{ text:"Thinking of friends shows you care! 😊", end:true },
+  "6c":{ text:"Pinagtagpo pero di itinadhana 💔", end:true },
+  "6d":{ text:"Learning from the past makes you wiser! 📘", end:true },
+  "6e":{ text:"Destiny brought us together once, but it was never meant to be 💔", end:true },
+  "6f":{ text:"There’s still time to make new memories ✨", end:true },
+  "6g":{ text:"Looking back is natural — keep moving forward 🙂", end:true },
+  "6h":{ text:"Enjoying your single era is powerful 🌟", end:true }
 };
 
-// Show question
+// SHOW QUESTION
 function showQuestion(key){
   currentKey = key;
   const q = story[key];
   questionEl.textContent = q.text;
+
   if(q.end){
-    document.getElementById('buttons').style.display = "none";
-  } else {
-    document.getElementById('buttons').style.display = "block";
+    document.getElementById("buttons").style.display = "none";
   }
 }
 
-// Yes button
-yesBtn.addEventListener('click', ()=>{
+// YES BUTTON
+yesBtn.addEventListener("click", () => {
+  if(currentKey === "welcome"){
+    noClicks = 0;
+    noBtn.style.transform = "translate(0,0)";
+    showQuestion("q2a");
+    return;
+  }
   showQuestion(story[currentKey].yes);
 });
 
-// No button
-noBtn.addEventListener('click', ()=>{
-  if(currentKey==="welcome"){
+// NO BUTTON
+noBtn.addEventListener("click", () => {
+  if(currentKey === "welcome"){
     noClicks++;
-    if(noClicks<4){
-      // Slight random move within screen
-      const maxX = 120;
-      const maxY = 30;
-      noBtn.style.transform = `translate(${Math.random()*maxX}px, ${Math.random()*maxY}px)`;
-    } else {
-      // Stop moving but stay visible
-      noBtn.style.transform = `translate(0px, 0px)`;
+    if(noClicks < 4){
+      const maxX = 100;
+      const maxY = 25;
+      noBtn.style.transform =
+        `translate(${Math.random()*maxX}px, ${Math.random()*maxY}px)`;
     }
     return;
   }
   showQuestion(story[currentKey].no);
 });
-
-// Initialize
-showQuestion("welcome");
 </script>
 </body>
 </html>
