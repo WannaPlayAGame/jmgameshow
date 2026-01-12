@@ -6,170 +6,127 @@
 <title>Jifford GameShow</title>
 
 <style>
-  body { 
-    font-family: Arial, sans-serif; 
-    background: #fdf6f0; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh; 
-    padding: 20px;
-  }
+body {
+  font-family: Arial, sans-serif;
+  background: #fdf6f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 
-  #game { 
-    max-width: 500px; 
-    width: 100%;
-    text-align: center; 
-    background: #fff; 
-    padding: 20px; 
-    border-radius: 15px; 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
-    position: relative;
-    overflow: hidden;
-  }
+#game {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+}
 
-  button { 
-    padding: 10px 25px; 
-    margin: 10px; 
-    border: none; 
-    border-radius: 8px; 
-    font-size: 16px; 
-    cursor: pointer; 
-    transition: transform 0.3s ease, opacity 0.4s ease;
-  }
+button {
+  padding: 12px 28px;
+  margin: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-  #yes { background-color: #4CAF50; color: white; }
-  #no  { background-color: #f44336; color: white; position: relative; }
+#yes {
+  background: #4CAF50;
+  color: white;
+}
 
-  /* Shake animation */
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    50% { transform: translateX(3px); }
-    75% { transform: translateX(-3px); }
-    100% { transform: translateX(0); }
-  }
+#no {
+  background: #f44336;
+  color: white;
+  position: absolute;
+  left: 50%;
+  top: 65%;
+  transform: translateX(-50%);
+  transition: left 0.35s ease, top 0.35s ease, opacity 0.4s ease, transform 0.2s ease;
+}
 
-  .shake {
-    animation: shake 0.4s;
-  }
+/* STRONGER, VISIBLE SHAKE */
+@keyframes shake {
+  0% { transform: translateX(-50%) rotate(0); }
+  25% { transform: translateX(-54%) rotate(-2deg); }
+  50% { transform: translateX(-46%) rotate(2deg); }
+  75% { transform: translateX(-54%) rotate(-2deg); }
+  100% { transform: translateX(-50%) rotate(0); }
+}
+
+.shake {
+  animation: shake 0.4s;
+}
 </style>
 </head>
 
 <body>
 <div id="game">
-  <h2 id="question">
-    Welcome to Jifford GameShow! 🎉<br>
-    Are you ready?
-  </h2>
+  <h2 id="question">Welcome to Jifford GameShow 🎉<br>Are you ready?</h2>
 
-  <div id="buttons">
-    <button id="yes">Yes</button>
-    <button id="no">No</button>
-  </div>
+  <button id="yes">Yes</button>
+  <button id="no">No</button>
 </div>
 
 <script>
-const questionEl = document.getElementById("question");
+const question = document.getElementById("question");
 const yesBtn = document.getElementById("yes");
-const noBtn  = document.getElementById("no");
-const gameBox = document.getElementById("game");
+const noBtn = document.getElementById("no");
+const game = document.getElementById("game");
 
-let currentKey = "welcome";
-let noClicks = 0;
-
-// STORY DATA
-const story = {
-  q2a:{ text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b" },
-  q2b:{ text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d" },
-
-  q3a:{ text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"q4a", no:"q4b" },
-  q3b:{ text:"Did you avoid doing something today on purpose? 🤭", yes:"q4c", no:"q4d" },
-  q3c:{ text:"Have you ever pretended to be busy just to avoid chores or homework? 😎", yes:"q4e", no:"q4f" },
-  q3d:{ text:"Did you stay honest and finish everything you planned? 💪", yes:"q4g", no:"q4h" },
-
-  q4a:{ text:"Ever opened the fridge and forgot what you wanted? 🥲", yes:"q5a", no:"q5a" },
-  q4b:{ text:"Ever forgotten what you were going to say? 😆", yes:"q5b", no:"q5b" },
-  q4c:{ text:"Did you ever forget your own password? 🤭", yes:"q5c", no:"q5c" },
-  q4d:{ text:"Ever walked into a classroom and forgot your homework? 📚", yes:"q5d", no:"q5d" },
-  q4e:{ text:"Ever walked into a room and just stood there? 😅", yes:"q5e", no:"q5e" },
-  q4f:{ text:"Did you ever forget a friend’s birthday? 🎂", yes:"q5f", no:"q5f" },
-  q4g:{ text:"Ever walked into a room and forgot why you went there? 🤔", yes:"q5g", no:"q5g" },
-  q4h:{ text:"Ever opened a tab and forgot why? 💻", yes:"q5h", no:"q5h" },
-
-  q5a:{ text:"Do you miss someone from the past?", yes:"6a", no:"6a" },
-  q5b:{ text:"Do you ever think about old friends?", yes:"6b", no:"6b" },
-  q5c:{ text:"Have you ever fallen in love with someone who loved someone else? 💔", yes:"6c", no:"6c" },
-  q5d:{ text:"Do you wish you were more prepared?", yes:"6d", no:"6d" },
-  q5e:{ text:"Have you ever experienced true love that just wasn’t meant to be? 💔", yes:"6e", no:"6e" },
-  q5f:{ text:"Do you regret missing any special moments?", yes:"6f", no:"6f" },
-  q5g:{ text:"Do you think about old memories?", yes:"6g", no:"6g" },
-  q5h:{ text:"Are you happy you’re single now?", yes:"6h", no:"6h" },
-
-  "6a":{ text:"Being honest about feelings is brave! 💖", end:true },
-  "6b":{ text:"Thinking of friends shows you care! 😊", end:true },
-  "6c":{ text:"Pinagtagpo pero di itinadhana 💔", end:true },
-  "6d":{ text:"Learning from the past makes you wiser! 📘", end:true },
-  "6e":{ text:"Destiny brought us together once, but it was never meant to be 💔", end:true },
-  "6f":{ text:"There’s still time to make new memories ✨", end:true },
-  "6g":{ text:"Looking back is natural — keep moving forward 🙂", end:true },
-  "6h":{ text:"Enjoying your single era is powerful 🌟", end:true }
-};
-
-// SHOW QUESTION
-function showQuestion(key){
-  currentKey = key;
-  const q = story[key];
-  questionEl.textContent = q.text;
-
-  if(q.end){
-    document.getElementById("buttons").style.display = "none";
-  }
-}
+let current = "welcome";
+let noCount = 0;
 
 // YES BUTTON
-yesBtn.addEventListener("click", () => {
-  if(currentKey === "welcome"){
-    noClicks = 0;
+yesBtn.onclick = () => {
+  if (current === "welcome") {
+    current = "next";
+    question.textContent = "Did anything exciting happen today? 🎉";
     noBtn.style.opacity = "1";
-    noBtn.style.transform = "translate(0,0)";
-    showQuestion("q2a");
-    return;
+    noBtn.style.transform = "translateX(-50%)";
+    noBtn.style.pointerEvents = "auto";
+    noCount = 0;
   }
-  showQuestion(story[currentKey].yes);
-});
+};
 
-// NO BUTTON
-noBtn.addEventListener("click", () => {
-  if(currentKey === "welcome"){
-    noClicks++;
+// NO BUTTON (WELCOME ONLY)
+noBtn.onclick = () => {
+  if (current !== "welcome") return;
 
-    // Shake effect
-    noBtn.classList.add("shake");
-    setTimeout(()=>noBtn.classList.remove("shake"), 400);
+  noCount++;
 
-    // Move within box
-    const box = gameBox.getBoundingClientRect();
-    const btn = noBtn.getBoundingClientRect();
+  // FORCE SHAKE EVERY CLICK
+  noBtn.classList.remove("shake");
+  void noBtn.offsetWidth;
+  noBtn.classList.add("shake");
 
-    const maxX = box.width - btn.width - 40;
-    const maxY = 60;
+  // SAFE MOVEMENT INSIDE CARD
+  const gameRect = game.getBoundingClientRect();
+  const btnRect = noBtn.getBoundingClientRect();
 
-    const x = Math.random() * maxX - maxX / 2;
-    const y = Math.random() * maxY;
+  const padding = 20;
+  const maxLeft = gameRect.width - btnRect.width - padding;
+  const maxTop = gameRect.height - btnRect.height - padding;
 
-    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+  const newLeft = Math.random() * maxLeft;
+  const newTop = Math.random() * (maxTop - 120) + 120;
 
-    // Disappear after enough presses
-    if(noClicks >= 6){
-      noBtn.style.opacity = "0";
-      noBtn.style.pointerEvents = "none";
-    }
-    return;
+  noBtn.style.left = `${newLeft}px`;
+  noBtn.style.top = `${newTop}px`;
+
+  // DISAPPEAR AFTER 6 CLICKS
+  if (noCount >= 6) {
+    noBtn.style.opacity = "0";
+    noBtn.style.transform = "scale(0.6)";
+    noBtn.style.pointerEvents = "none";
   }
-
-  showQuestion(story[currentKey].no);
-});
+};
 </script>
 </body>
 </html>
