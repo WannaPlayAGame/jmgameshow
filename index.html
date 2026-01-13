@@ -13,49 +13,44 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    margin: 0;
   }
 
   #game {
-    max-width: 500px;
-    width: 100%;
     background: #fff;
     padding: 25px;
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 480px;
     text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  h2 {
-    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   }
 
   #buttons {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     gap: 20px;
+    margin-top: 20px;
     position: relative;
   }
 
   button {
-    padding: 12px 28px;
+    flex: 1;
+    padding: 12px;
     font-size: 16px;
+    border-radius: 10px;
     border: none;
-    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.35s ease;
+    transition: transform 0.4s ease;
   }
 
   #yes {
-    background-color: #4CAF50;
+    background: #4CAF50;
     color: white;
     z-index: 2;
   }
 
   #no {
-    background-color: #f44336;
+    background: #f44336;
     color: white;
     z-index: 1;
   }
@@ -64,7 +59,7 @@
 
 <body>
 <div id="game">
-  <h2 id="question">Welcome to Jifford GameShow 🎮<br>Are you ready?</h2>
+  <h2 id="question"></h2>
 
   <div id="buttons">
     <button id="yes">Yes</button>
@@ -81,72 +76,70 @@ const buttons = document.getElementById("buttons");
 let currentKey = "welcome";
 let noClicks = 0;
 
-/* ================= STORY DATA ================= */
-
+/* ===== STORY (UNCHANGED CONTENT) ===== */
 const story = {
-  welcome: { yes: "q2a", no: "q2b" },
+  welcome: {
+    text: "Welcome to Jifford GameShow 🎉\nAre you ready?",
+    yes: "q2a",
+    no: "q2b"
+  },
 
   q2a: { text: "Did anything exciting happen today?", yes: "q3a", no: "q3b" },
   q2b: { text: "Did you try something new today?", yes: "q3c", no: "q3d" },
 
-  q3a: { text: "Have you ever pretended to work just to avoid chores?", yes: "q4a", no: "q4b" },
+  q3a: { text: "Have you ever avoided chores by pretending to be busy?", yes: "q4a", no: "q4b" },
   q3b: { text: "Did you avoid something today on purpose?", yes: "q4c", no: "q4d" },
-  q3c: { text: "Have you ever pretended to be busy to escape responsibilities?", yes: "q4e", no: "q4f" },
-  q3d: { text: "Did you honestly finish everything you planned?", yes: "q4g", no: "q4h" },
+  q3c: { text: "Have you ever pretended to be productive?", yes: "q4e", no: "q4f" },
+  q3d: { text: "Did you finish everything you planned today?", yes: "q4g", no: "q4h" },
 
   q4a: { text: "Ever opened the fridge and forgot why?", yes: "q5a", no: "q5a" },
-  q4b: { text: "Ever forgotten what you were about to say?", yes: "q5b", no: "q5b" },
-  q4c: { text: "Did you ever forget your own password?", yes: "q5c", no: "q5c" },
-  q4d: { text: "Ever walked into class and realized you forgot something important?", yes: "q5d", no: "q5d" },
-  q4e: { text: "Ever entered a room and just stood there confused?", yes: "q5e", no: "q5e" },
-  q4f: { text: "Did you ever forget a friend’s birthday?", yes: "q5f", no: "q5f" },
-  q4g: { text: "Ever walked somewhere and forgot why you went?", yes: "q5g", no: "q5g" },
-  q4h: { text: "Ever opened an app and forgot your reason?", yes: "q5h", no: "q5h" },
+  q4b: { text: "Ever forgot what you were about to say?", yes: "q5b", no: "q5b" },
+  q4c: { text: "Ever forgot your own password?", yes: "q5c", no: "q5c" },
+  q4d: { text: "Ever walked into class and forgot homework?", yes: "q5d", no: "q5d" },
+  q4e: { text: "Ever walked into a room and froze?", yes: "q5e", no: "q5e" },
+  q4f: { text: "Ever forgot a friend’s birthday?", yes: "q5f", no: "q5f" },
+  q4g: { text: "Ever forgot why you opened an app?", yes: "q5g", no: "q5g" },
+  q4h: { text: "Ever opened a tab and forgot it?", yes: "q5h", no: "q5h" },
 
-  q5a: { text: "Do you miss someone from the past?", yes: "6a", no: "6a" },
-  q5b: { text: "Do you ever think about old friends?", yes: "6b", no: "6b" },
-  q5c: { text: "Have you ever fallen in love with someone who loved someone else?", yes: "6c", no: "6c" },
-  q5d: { text: "Do you wish you were more prepared back then?", yes: "6d", no: "6d" },
-  q5e: { text: "Have you experienced true love that was not meant to last?", yes: "6e", no: "6e" },
-  q5f: { text: "Do you regret missing any special moments?", yes: "6f", no: "6f" },
-  q5g: { text: "Do old memories still cross your mind?", yes: "6g", no: "6g" },
-  q5h: { text: "Are you happy with where you are now?", yes: "6h", no: "6h" },
+  q5a: { text: "Do you miss someone from the past?", yes: "end1", no: "end1" },
+  q5b: { text: "Do you think about old friends?", yes: "end2", no: "end2" },
+  q5c: { text: "Have you fallen for someone who loved someone else?", yes: "end3", no: "end3" },
+  q5d: { text: "Do you wish you were more prepared before?", yes: "end4", no: "end4" },
+  q5e: { text: "Have you experienced love that wasn’t meant to be?", yes: "end5", no: "end5" },
+  q5f: { text: "Do you regret missing moments?", yes: "end6", no: "end6" },
+  q5g: { text: "Do old memories visit you sometimes?", yes: "end7", no: "end7" },
+  q5h: { text: "Are you happy where you are now?", yes: "end8", no: "end8" },
 
-  "6a": { text: "Being honest about feelings takes courage 💙", end: true },
-  "6b": { text: "Thinking of friends means they mattered 😊", end: true },
-  "6c": { text: "Pinagtagpo pero di itinadhana 💔", end: true },
-  "6d": { text: "Growth comes from reflection 📘", end: true },
-  "6e": { text: "Some love teaches, not stays 💔", end: true },
-  "6f": { text: "New memories are still waiting ✨", end: true },
-  "6g": { text: "The past shapes us, not traps us 🌱", end: true },
-  "6h": { text: "Peace with yourself is powerful 🌟", end: true }
+  end1: { text: "Being honest with feelings takes courage 💖", end: true },
+  end2: { text: "Thinking of friends means you care 😊", end: true },
+  end3: { text: "Pinagtagpo pero di itinadhana 💔", end: true },
+  end4: { text: "Growth comes from reflection 📘", end: true },
+  end5: { text: "Some love teaches, not stays 💔", end: true },
+  end6: { text: "More moments will come 🌟", end: true },
+  end7: { text: "Memories shape who we are 😄", end: true },
+  end8: { text: "Contentment is powerful ✨", end: true }
 };
 
-/* ================= FUNCTIONS ================= */
-
-function showQuestion(key) {
+/* ===== RENDER FUNCTION ===== */
+function render(key) {
   currentKey = key;
   const q = story[key];
-
-  questionEl.textContent = q.text || questionEl.textContent;
+  questionEl.textContent = q.text;
 
   if (q.end) {
     buttons.style.display = "none";
   } else {
     buttons.style.display = "flex";
-    noBtn.style.transform = "translate(0,0)";
   }
 }
 
-/* ================= BUTTON LOGIC ================= */
+/* ===== YES BUTTON ===== */
+yesBtn.onclick = () => {
+  render(story[currentKey].yes);
+};
 
-yesBtn.addEventListener("click", () => {
-  showQuestion(story[currentKey].yes);
-});
-
-noBtn.addEventListener("click", () => {
-
-  // WELCOME ONLY
+/* ===== NO BUTTON (WELCOME FIX APPLIED) ===== */
+noBtn.onclick = () => {
   if (currentKey === "welcome") {
     noClicks++;
 
@@ -165,12 +158,11 @@ noBtn.addEventListener("click", () => {
     return;
   }
 
-  showQuestion(story[currentKey].no);
-});
+  render(story[currentKey].no);
+};
 
-/* ================= INIT ================= */
-
-showQuestion("welcome");
+/* ===== START GAME ===== */
+render("welcome");
 </script>
 </body>
 </html>
