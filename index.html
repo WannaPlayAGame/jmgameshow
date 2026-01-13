@@ -23,13 +23,16 @@ body {
   border-radius: 16px;
   text-align: center;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+#buttons {
   position: relative;
-  overflow: hidden;
+  height: 140px; /* space for movement */
+  margin-top: 20px;
 }
 
 button {
   padding: 12px 28px;
-  margin: 10px;
   font-size: 16px;
   border: none;
   border-radius: 10px;
@@ -39,6 +42,8 @@ button {
 #yes {
   background: #4CAF50;
   color: white;
+  position: relative;
+  z-index: 2;
 }
 
 #no {
@@ -46,17 +51,21 @@ button {
   color: white;
   position: absolute;
   left: 50%;
-  top: 65%;
+  top: 70px;
   transform: translateX(-50%);
-  transition: left 0.35s ease, top 0.35s ease, opacity 0.4s ease, transform 0.2s ease;
+  transition:
+    left 0.35s ease,
+    top 0.35s ease,
+    opacity 0.4s ease,
+    transform 0.2s ease;
 }
 
-/* STRONGER, VISIBLE SHAKE */
+/* SHAKE */
 @keyframes shake {
   0% { transform: translateX(-50%) rotate(0); }
-  25% { transform: translateX(-54%) rotate(-2deg); }
-  50% { transform: translateX(-46%) rotate(2deg); }
-  75% { transform: translateX(-54%) rotate(-2deg); }
+  25% { transform: translateX(-55%) rotate(-2deg); }
+  50% { transform: translateX(-45%) rotate(2deg); }
+  75% { transform: translateX(-55%) rotate(-2deg); }
   100% { transform: translateX(-50%) rotate(0); }
 }
 
@@ -68,17 +77,22 @@ button {
 
 <body>
 <div id="game">
-  <h2 id="question">Welcome to Jifford GameShow 🎉<br>Are you ready?</h2>
+  <h2 id="question">
+    Welcome to Jifford GameShow 🎉<br>
+    Are you ready?
+  </h2>
 
-  <button id="yes">Yes</button>
-  <button id="no">No</button>
+  <div id="buttons">
+    <button id="yes">Yes</button>
+    <button id="no">No</button>
+  </div>
 </div>
 
 <script>
 const question = document.getElementById("question");
 const yesBtn = document.getElementById("yes");
 const noBtn = document.getElementById("no");
-const game = document.getElementById("game");
+const buttonsBox = document.getElementById("buttons");
 
 let current = "welcome";
 let noCount = 0;
@@ -88,34 +102,38 @@ yesBtn.onclick = () => {
   if (current === "welcome") {
     current = "next";
     question.textContent = "Did anything exciting happen today? 🎉";
+
+    // Reset NO button
     noBtn.style.opacity = "1";
     noBtn.style.transform = "translateX(-50%)";
     noBtn.style.pointerEvents = "auto";
+    noBtn.style.left = "50%";
+    noBtn.style.top = "70px";
     noCount = 0;
   }
 };
 
-// NO BUTTON (WELCOME ONLY)
+// NO BUTTON
 noBtn.onclick = () => {
   if (current !== "welcome") return;
 
   noCount++;
 
-  // FORCE SHAKE EVERY CLICK
+  // SHAKE (force replay)
   noBtn.classList.remove("shake");
   void noBtn.offsetWidth;
   noBtn.classList.add("shake");
 
-  // SAFE MOVEMENT INSIDE CARD
-  const gameRect = game.getBoundingClientRect();
-  const btnRect = noBtn.getBoundingClientRect();
+  // SAFE MOVEMENT (inside buttons box)
+  const box = buttonsBox.getBoundingClientRect();
+  const btn = noBtn.getBoundingClientRect();
 
-  const padding = 20;
-  const maxLeft = gameRect.width - btnRect.width - padding;
-  const maxTop = gameRect.height - btnRect.height - padding;
+  const padding = 10;
+  const maxLeft = box.width - btn.width - padding;
+  const maxTop = box.height - btn.height - padding;
 
   const newLeft = Math.random() * maxLeft;
-  const newTop = Math.random() * (maxTop - 120) + 120;
+  const newTop = Math.random() * maxTop;
 
   noBtn.style.left = `${newLeft}px`;
   noBtn.style.top = `${newTop}px`;
