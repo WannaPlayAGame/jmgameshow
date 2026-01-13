@@ -67,10 +67,9 @@ const questionEl=document.getElementById("question");
 const yesBtn=document.getElementById("yes");
 const noBtn=document.getElementById("no");
 const buttons=document.getElementById("buttons");
-const game=document.getElementById("game");
 
 let current="welcome";
-let welcomeNoClicks=0;
+let noClicks=0;
 
 /* 🔹 STORY (UNCHANGED) */
 const story={
@@ -120,14 +119,14 @@ function render(key){
     buttons.style.display="flex";
     noBtn.style.display="inline-block";
     noBtn.style.transform="translate(0,0)";
-    welcomeNoClicks=0;
+    noClicks=0;
     return;
   }
 
   const q=story[key];
   questionEl.textContent=q.text;
 
-  noBtn.style.display="inline-block"; // 🔑 RESET NO
+  noBtn.style.display="inline-block";
   noBtn.style.transform="translate(0,0)";
 
   if(q.end){
@@ -143,26 +142,25 @@ yesBtn.onclick=()=>{
   else render(story[current].yes);
 };
 
-/* 🔹 NO */
+/* 🔹 NO (WELCOME FIXED ONLY) */
 noBtn.onclick=()=>{
-  if(current==="welcome"){
-    welcomeNoClicks++;
+  if (current === "welcome") {
+    noClicks++;
 
-    if(welcomeNoClicks===4){
-  // move off-screen instead of disappearing
-  noBtn.style.transform="translate(500px, -300px)";
-  return;
+    if (noClicks === 1) {
+      noBtn.style.transform = "translate(120px, 0)";
+    } 
+    else if (noClicks === 2) {
+      noBtn.style.transform = "translate(120px, 80px)";
+    } 
+    else if (noClicks === 3) {
+      noBtn.style.transform = "translate(-100px, 80px)";
+    } 
+    else if (noClicks === 4) {
+      // guaranteed exit on 4th tap
+      noBtn.style.transform = "translate(600px, -400px)";
     }
 
-    // BIG RANDOM MOVEMENT
-    const maxX=180;
-    const maxY=140;
-
-    const x=(Math.random()*maxX*2)-maxX;
-    const y=(Math.random()*maxY*2)-maxY;
-    const r=(Math.random()*30)-15;
-
-    noBtn.style.transform=`translate(${x}px,${y}px) rotate(${r}deg)`;
     return;
   }
 
