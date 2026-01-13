@@ -21,13 +21,14 @@
     padding: 20px; 
     border-radius: 15px; 
     box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+    position: relative;
   }
   #buttons { 
     display: flex; 
     justify-content: center; 
     margin-top: 20px; 
-    gap: 20px; /* space between buttons */
-    position: relative; 
+    gap: 20px;
+    position: relative;
   }
   button { 
     padding: 10px 25px; 
@@ -35,7 +36,7 @@
     border-radius: 8px; 
     font-size: 16px; 
     cursor: pointer; 
-    transition: transform 0.3s ease; /* smooth movement */
+    transition: transform 0.3s ease; 
   }
   #yes { background-color: #4CAF50; color: white; }
   #no { background-color: #f44336; color: white; position: relative; }
@@ -60,7 +61,7 @@ let noClicks = 0;
 
 // Story data
 const story = {
-  "welcome": {yes:"q2a", no:"q2b"},
+  "welcome": {yes:"q2a", no:null}, // no button does not go to a question
   "q2a": {text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b"},
   "q2b": {text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d"},
   "q3a": {text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"q4a", no:"q4b"},
@@ -96,9 +97,10 @@ const story = {
 // Show question
 function showQuestion(key){
   currentKey = key;
-  const q = story[key];
-  questionEl.textContent = q.text;
-  if(q.end){
+  if(story[key].text){
+    questionEl.textContent = story[key].text;
+  }
+  if(story[key].end){
     document.getElementById('buttons').style.display = "none";
   } else {
     document.getElementById('buttons').style.display = "flex";
@@ -115,14 +117,16 @@ noBtn.addEventListener('click', ()=>{
   if(currentKey==="welcome"){
     noClicks++;
     if(noClicks < 6){
-      // Move no button smoothly in random direction but stay within container
-      const x = (Math.random() * 200) - 100; // left/right
-      const y = (Math.random() * 50) - 25;   // up/down
-      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random()*15-7}deg)`;
+      // random movement left/right & up/down
+      const maxX = 120;
+      const maxY = 30;
+      const x = (Math.random() * maxX*2 - maxX); 
+      const y = (Math.random() * maxY*2 - maxY); 
+      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random()*10-5}deg)`;
     } else {
-      noBtn.style.display = "none"; // disappears after 6 presses
+      noBtn.style.display = "none";
     }
-    return;
+    return; // don't proceed to any question
   }
   showQuestion(story[currentKey].no);
 });
