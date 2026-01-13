@@ -59,14 +59,46 @@ const noBtn = document.getElementById('no');
 let currentKey = "welcome";
 let noClicks = 0;
 
-// Story data (example, replace with your full questions)
+// Full story data based on our compiled plan
 const story = {
-  "q2a": {text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b"},
-  "q2b": {text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d"},
-  "q3a": {text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"end1", no:"end2"},
-  "q3b": {text:"Did you avoid doing something today on purpose? 🤭", yes:"end1", no:"end2"},
-  "end1": {text:"Congrats! You reached the end! 🎉", end:true},
-  "end2": {text:"Game over, but you did well! 👍", end:true}
+  "welcome": {yes:"q1", no:"q1"},
+  
+  "q1": {text:"Did you have fun today?", yes:"q2A", no:"q2B"},
+  
+  "q2A": {text:"Did you answer everything honestly?", yes:"q3A", no:"q3B"},
+  "q2B": {text:"Did you answer everything honestly?", yes:"q3C", no:"q3D"},
+  
+  "q3A": {text:"Have you ever pretended to be busy to avoid chores?", yes:"q4A", no:"q4B"},
+  "q3B": {text:"Do you enjoy procrastinating sometimes?", yes:"q4C", no:"q4D"},
+  "q3C": {text:"Do you often try to finish tasks immediately?", yes:"q4E", no:"q4F"},
+  "q3D": {text:"Do you reflect on your actions daily?", yes:"q4G", no:"q4H"},
+  
+  "q4A": {text:"Ever opened the fridge and forgot what you wanted?", yes:"q5A", no:"q5A"},
+  "q4B": {text:"Ever forgotten what you were going to say?", yes:"q5B", no:"q5B"},
+  "q4C": {text:"Did you ever forget your own password?", yes:"q5C", no:"q5C"},
+  "q4D": {text:"Ever walked into a classroom and forgot your homework?", yes:"q5D", no:"q5D"},
+  "q4E": {text:"Ever walked into a room and just stood there?", yes:"q5E", no:"q5E"},
+  "q4F": {text:"Did you ever forget a friend’s birthday?", yes:"q5F", no:"q5F"},
+  "q4G": {text:"Ever walked into a room and forgot why you went there?", yes:"q5G", no:"q5G"},
+  "q4H": {text:"Ever opened a tab and forgot why?", yes:"q5H", no:"q5H"},
+  
+  "q5A": {text:"Do you miss someone from the past?", yes:"q6A", no:"q6A"},
+  "q5B": {text:"Do you ever think about old friends?", yes:"q6B", no:"q6B"},
+  "q5C": {text:"Have you ever fallen in love with someone who loved someone else?", yes:"q6C", no:"q6C"},
+  "q5D": {text:"Do you wish you were more prepared?", yes:"q6D", no:"q6D"},
+  "q5E": {text:"Have you ever experienced true love that wasn’t meant to be?", yes:"q6E", no:"q6E"},
+  "q5F": {text:"Do you regret missing any special moments?", yes:"q6F", no:"q6F"},
+  "q5G": {text:"Do you think about old memories?", yes:"q6G", no:"q6G"},
+  "q5H": {text:"Are you happy you’re single now?", yes:"q6H", no:"q6H"},
+  
+  "q6A": {text:"Being honest about feelings is brave! 💖", end:true},
+  "q6B": {text:"Thinking of friends shows you care! 😊", end:true},
+  "q6C": {text:"Pinagtagpo pero di itinadhana 💔", end:true},
+  "q6D": {text:"Learning from the past makes you wiser! 📘", end:true},
+  "q6E": {text:"Destiny brought us together once, but it was never meant to be 💔", end:true},
+  "q6F": {text:"Don’t worry, there’s still time for new memories! 🎉", end:true},
+  "q6G": {text:"Looking back is natural, keep smiling! 😄", end:true},
+  "q6H": {text:"Enjoying your single life is a blessing! 🌟", end:true}
 };
 
 // Show question
@@ -89,7 +121,7 @@ function showQuestion(key){
 // Yes button
 yesBtn.addEventListener('click', ()=>{
   if(currentKey === "welcome"){
-    showQuestion("q2a");
+    showQuestion("q1");
   } else {
     showQuestion(story[currentKey].yes);
   }
@@ -104,7 +136,7 @@ noBtn.addEventListener('click', ()=>{
     const container = document.getElementById('game').getBoundingClientRect();
 
     if(noClicks <= 6){
-      // Random movement but never overlap yes button
+      // Random movement up/down/left/right but not overlapping Yes
       let x, y, tries = 0;
       do {
         x = Math.random() * (container.width - btnRect.width) - (container.width/2 - btnRect.width/2);
