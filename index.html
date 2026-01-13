@@ -59,52 +59,66 @@ const noBtn = document.getElementById('no');
 let currentKey = "welcome";
 let noClicks = 0;
 
-// Story data
+// Story data (example, replace with your full questions)
 const story = {
-  "welcome": {yes:"q2a", no:null}, // no button does not go to a question
   "q2a": {text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b"},
   "q2b": {text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d"},
-  // ... (rest of your story as before)
+  "q3a": {text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"end1", no:"end2"},
+  "q3b": {text:"Did you avoid doing something today on purpose? 🤭", yes:"end1", no:"end2"},
+  "end1": {text:"Congrats! You reached the end! 🎉", end:true},
+  "end2": {text:"Game over, but you did well! 👍", end:true}
 };
 
 // Show question
 function showQuestion(key){
   currentKey = key;
-  if(story[key].text){
-    questionEl.textContent = story[key].text;
-  }
-  if(story[key].end){
+  const q = story[key];
+  if(!q) return;
+
+  questionEl.textContent = q.text;
+  if(q.end){
     document.getElementById('buttons').style.display = "none";
   } else {
     document.getElementById('buttons').style.display = "flex";
+    yesBtn.style.transform = "translate(0,0)";
+    noBtn.style.transform = "translate(0,0)";
+    noBtn.style.display = "inline-block";
   }
 }
 
 // Yes button
 yesBtn.addEventListener('click', ()=>{
-  showQuestion(story[currentKey].yes);
+  if(currentKey === "welcome"){
+    showQuestion("q2a");
+  } else {
+    showQuestion(story[currentKey].yes);
+  }
 });
 
 // No button
 noBtn.addEventListener('click', ()=>{
   if(currentKey==="welcome"){
     noClicks++;
-    if(noClicks < 6){
-      // Random movement in X and Y within the game box
-      const container = document.getElementById('game');
-      const rect = container.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    const yesRect = yesBtn.getBoundingClientRect();
+    const container = document.getElementById('game').getBoundingClientRect();
 
-      // Limit max movement so it stays inside the container
-      const maxX = rect.width - btnRect.width - 20; 
-      const maxY = rect.height - btnRect.height - 20; 
+    if(noClicks <= 6){
+      // Random movement but never overlap yes button
+      let x, y, tries = 0;
+      do {
+        x = Math.random() * (container.width - btnRect.width) - (container.width/2 - btnRect.width/2);
+        y = Math.random() * (container.height - btnRect.height) - (container.height/2 - btnRect.height/2);
+        tries++;
+      } while(
+        ((x + btnRect.width/2 > yesRect.left - container.left) && (x < yesRect.right - container.left)) &&
+        ((y + btnRect.height/2 > yesRect.top - container.top) && (y < yesRect.bottom - container.top)) &&
+        tries < 50
+      );
 
-      const x = Math.random() * maxX - maxX/2; // -max/2 to +max/2
-      const y = Math.random() * maxY - maxY/2;
-
-      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random()*15-7.5}deg)`;
+      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random()*20-10}deg)`;
     } else {
-      noBtn.style.display = "none"; // disappear after 6 clicks
+      noBtn.style.display = "none";
     }
     return;
   }
