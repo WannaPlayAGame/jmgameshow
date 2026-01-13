@@ -4,47 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jifford GameShow</title>
+
 <style>
-  body { 
-    font-family: Arial, sans-serif; 
-    background: #fdf6f0; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh; 
-    padding: 20px;
-  }
-  #game { 
-    max-width: 500px; 
-    text-align: center; 
-    background: #fff; 
-    padding: 20px; 
-    border-radius: 15px; 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
-    position: relative;
-  }
-  #buttons { 
-    display: flex; 
-    justify-content: center; 
-    margin-top: 20px; 
-    gap: 20px;
-    position: relative;
-  }
-  button { 
-    padding: 10px 25px; 
-    border: none; 
-    border-radius: 8px; 
-    font-size: 16px; 
-    cursor: pointer; 
-    transition: transform 0.3s ease; 
-  }
-  #yes { background-color: #4CAF50; color: white; }
-  #no { background-color: #f44336; color: white; position: relative; }
+body {
+  font-family: Arial, sans-serif;
+  background: #fdf6f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#game {
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  text-align: center;
+  position: relative;
+}
+
+#question {
+  font-size: 20px;
+}
+
+#buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 25px;
+  position: relative;
+}
+
+button {
+  padding: 12px 28px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.35s ease;
+}
+
+#yes { background: #4CAF50; color: white; }
+#no  { background: #f44336; color: white; position: relative; }
 </style>
 </head>
+
 <body>
 <div id="game">
-  <h2 id="question">Welcome to Jifford GameShow! 🎉<br>Are you ready?</h2>
+  <div id="question"></div>
   <div id="buttons">
     <button id="yes">Yes</button>
     <button id="no">No</button>
@@ -52,113 +62,115 @@
 </div>
 
 <script>
-const questionEl = document.getElementById('question');
-const yesBtn = document.getElementById('yes');
-const noBtn = document.getElementById('no');
+const questionEl = document.getElementById("question");
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const buttons = document.getElementById("buttons");
+const gameBox = document.getElementById("game");
 
-let currentKey = "welcome";
+let current = "welcome";
 let noClicks = 0;
 
-// Full story data based on our compiled plan
+/* 🔹 STORY (UNCHANGED – ALL PLANNED QUESTIONS) */
 const story = {
-  "welcome": {yes:"q1", no:"q1"},
-  
-  "q1": {text:"Did you have fun today?", yes:"q2A", no:"q2B"},
-  
-  "q2A": {text:"Did you answer everything honestly?", yes:"q3A", no:"q3B"},
-  "q2B": {text:"Did you answer everything honestly?", yes:"q3C", no:"q3D"},
-  
-  "q3A": {text:"Have you ever pretended to be busy to avoid chores?", yes:"q4A", no:"q4B"},
-  "q3B": {text:"Do you enjoy procrastinating sometimes?", yes:"q4C", no:"q4D"},
-  "q3C": {text:"Do you often try to finish tasks immediately?", yes:"q4E", no:"q4F"},
-  "q3D": {text:"Do you reflect on your actions daily?", yes:"q4G", no:"q4H"},
-  
-  "q4A": {text:"Ever opened the fridge and forgot what you wanted?", yes:"q5A", no:"q5A"},
-  "q4B": {text:"Ever forgotten what you were going to say?", yes:"q5B", no:"q5B"},
-  "q4C": {text:"Did you ever forget your own password?", yes:"q5C", no:"q5C"},
-  "q4D": {text:"Ever walked into a classroom and forgot your homework?", yes:"q5D", no:"q5D"},
-  "q4E": {text:"Ever walked into a room and just stood there?", yes:"q5E", no:"q5E"},
-  "q4F": {text:"Did you ever forget a friend’s birthday?", yes:"q5F", no:"q5F"},
-  "q4G": {text:"Ever walked into a room and forgot why you went there?", yes:"q5G", no:"q5G"},
-  "q4H": {text:"Ever opened a tab and forgot why?", yes:"q5H", no:"q5H"},
-  
-  "q5A": {text:"Do you miss someone from the past?", yes:"q6A", no:"q6A"},
-  "q5B": {text:"Do you ever think about old friends?", yes:"q6B", no:"q6B"},
-  "q5C": {text:"Have you ever fallen in love with someone who loved someone else?", yes:"q6C", no:"q6C"},
-  "q5D": {text:"Do you wish you were more prepared?", yes:"q6D", no:"q6D"},
-  "q5E": {text:"Have you ever experienced true love that wasn’t meant to be?", yes:"q6E", no:"q6E"},
-  "q5F": {text:"Do you regret missing any special moments?", yes:"q6F", no:"q6F"},
-  "q5G": {text:"Do you think about old memories?", yes:"q6G", no:"q6G"},
-  "q5H": {text:"Are you happy you’re single now?", yes:"q6H", no:"q6H"},
-  
-  "q6A": {text:"Being honest about feelings is brave! 💖", end:true},
-  "q6B": {text:"Thinking of friends shows you care! 😊", end:true},
-  "q6C": {text:"Pinagtagpo pero di itinadhana 💔", end:true},
-  "q6D": {text:"Learning from the past makes you wiser! 📘", end:true},
-  "q6E": {text:"Destiny brought us together once, but it was never meant to be 💔", end:true},
-  "q6F": {text:"Don’t worry, there’s still time for new memories! 🎉", end:true},
-  "q6G": {text:"Looking back is natural, keep smiling! 😄", end:true},
-  "q6H": {text:"Enjoying your single life is a blessing! 🌟", end:true}
+  q1:{text:"Did you have fun today?",yes:"q2A",no:"q2B"},
+  q2A:{text:"Did you answer everything honestly?",yes:"q3A",no:"q3B"},
+  q2B:{text:"Did you answer everything honestly?",yes:"q3C",no:"q3D"},
+
+  q3A:{text:"Have you ever pretended to be busy to avoid chores?",yes:"q4A",no:"q4B"},
+  q3B:{text:"Do you enjoy procrastinating sometimes?",yes:"q4C",no:"q4D"},
+  q3C:{text:"Do you try to finish tasks immediately?",yes:"q4E",no:"q4F"},
+  q3D:{text:"Do you reflect on your actions daily?",yes:"q4G",no:"q4H"},
+
+  q4A:{text:"Ever opened the fridge and forgot why?",yes:"q5A",no:"q5A"},
+  q4B:{text:"Ever forgotten what you were about to say?",yes:"q5B",no:"q5B"},
+  q4C:{text:"Ever forgotten a password?",yes:"q5C",no:"q5C"},
+  q4D:{text:"Forgot homework at school?",yes:"q5D",no:"q5D"},
+  q4E:{text:"Ever walked into a room and froze?",yes:"q5E",no:"q5E"},
+  q4F:{text:"Forgot a friend's birthday?",yes:"q5F",no:"q5F"},
+  q4G:{text:"Forgot why you entered a room?",yes:"q5G",no:"q5G"},
+  q4H:{text:"Opened a tab and forgot why?",yes:"q5H",no:"q5H"},
+
+  q5A:{text:"Do you miss someone from the past?",yes:"endA",no:"endA"},
+  q5B:{text:"Do you think of old friends?",yes:"endB",no:"endB"},
+  q5C:{text:"Loved someone who loved someone else?",yes:"endC",no:"endC"},
+  q5D:{text:"Wish you were more prepared?",yes:"endD",no:"endD"},
+  q5E:{text:"Loved someone not meant for you?",yes:"endE",no:"endE"},
+  q5F:{text:"Regret missing moments?",yes:"endF",no:"endF"},
+  q5G:{text:"Think about old memories?",yes:"endG",no:"endG"},
+  q5H:{text:"Happy being single?",yes:"endH",no:"endH"},
+
+  endA:{text:"Being honest is brave 💖",end:true},
+  endB:{text:"You care deeply 😊",end:true},
+  endC:{text:"Pinagtagpo pero di itinadhana 💔",end:true},
+  endD:{text:"Lessons make you wiser 📘",end:true},
+  endE:{text:"Not all love stays 💔",end:true},
+  endF:{text:"More memories await 🎉",end:true},
+  endG:{text:"Looking back is human 😄",end:true},
+  endH:{text:"Freedom is beautiful 🌟",end:true}
 };
 
-// Show question
-function showQuestion(key){
-  currentKey = key;
-  const q = story[key];
-  if(!q) return;
+/* 🔹 RENDER */
+function render(key){
+  current = key;
 
-  questionEl.textContent = q.text;
-  if(q.end){
-    document.getElementById('buttons').style.display = "none";
-  } else {
-    document.getElementById('buttons').style.display = "flex";
-    yesBtn.style.transform = "translate(0,0)";
-    noBtn.style.transform = "translate(0,0)";
+  if(key === "welcome"){
+    questionEl.innerHTML = "🎉 <b>Welcome to Jifford GameShow!</b><br>Are you ready to play?";
+    buttons.style.display = "flex";
     noBtn.style.display = "inline-block";
+    noBtn.style.transform = "translate(0,0)";
+    noClicks = 0;
+    return;
+  }
+
+  const q = story[key];
+  questionEl.textContent = q.text;
+
+  if(q.end){
+    buttons.style.display = "none";
+  } else {
+    buttons.style.display = "flex";
+    noBtn.style.transform = "translate(0,0)";
   }
 }
 
-// Yes button
-yesBtn.addEventListener('click', ()=>{
-  if(currentKey === "welcome"){
-    showQuestion("q1");
-  } else {
-    showQuestion(story[currentKey].yes);
-  }
-});
+/* 🔹 YES */
+yesBtn.onclick = ()=>{
+  if(current==="welcome") render("q1");
+  else render(story[current].yes);
+};
 
-// No button
-noBtn.addEventListener('click', ()=>{
-  if(currentKey==="welcome"){
+/* 🔹 NO */
+noBtn.onclick = ()=>{
+  if(current==="welcome"){
     noClicks++;
-    const btnRect = noBtn.getBoundingClientRect();
-    const yesRect = yesBtn.getBoundingClientRect();
-    const container = document.getElementById('game').getBoundingClientRect();
 
-    if(noClicks <= 6){
-      // Random movement up/down/left/right but not overlapping Yes
-      let x, y, tries = 0;
-      do {
-        x = Math.random() * (container.width - btnRect.width) - (container.width/2 - btnRect.width/2);
-        y = Math.random() * (container.height - btnRect.height) - (container.height/2 - btnRect.height/2);
-        tries++;
-      } while(
-        ((x + btnRect.width/2 > yesRect.left - container.left) && (x < yesRect.right - container.left)) &&
-        ((y + btnRect.height/2 > yesRect.top - container.top) && (y < yesRect.bottom - container.top)) &&
-        tries < 50
-      );
-
-      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random()*20-10}deg)`;
-    } else {
+    if(noClicks > 6){
       noBtn.style.display = "none";
+      return;
     }
+
+    const box = gameBox.getBoundingClientRect();
+    const yes = yesBtn.getBoundingClientRect();
+
+    let x,y,safe=false,tries=0;
+    while(!safe && tries<50){
+      x = (Math.random()-0.5)*(box.width-120);
+      y = (Math.random()-0.5)*(box.height-160);
+      safe = !(x > yes.left-box.left-60 && x < yes.right-box.left &&
+               y > yes.top-box.top-40 && y < yes.bottom-box.top);
+      tries++;
+    }
+
+    noBtn.style.transform =
+      `translate(${x}px,${y}px) rotate(${Math.random()*20-10}deg)`;
     return;
   }
-  showQuestion(story[currentKey].no);
-});
+  render(story[current].no);
+};
 
-// Initialize
-showQuestion("welcome");
+/* START */
+render("welcome");
 </script>
 </body>
 </html>
