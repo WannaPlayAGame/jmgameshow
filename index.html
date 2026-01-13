@@ -6,49 +6,50 @@
 <title>Jifford GameShow</title>
 
 <style>
-body {
+body{
   font-family: Arial, sans-serif;
-  background: #fdf6f0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  background:#fdf6f0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
 }
 
-#game {
-  width: 100%;
-  max-width: 480px;
-  background: white;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  text-align: center;
-  position: relative;
+#game{
+  width:100%;
+  max-width:480px;
+  background:#fff;
+  padding:25px;
+  border-radius:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
 }
 
-#question {
-  font-size: 20px;
+#question{
+  font-size:20px;
 }
 
-#buttons {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 25px;
-  position: relative;
+#buttons{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  margin-top:30px;
+  position:relative;
 }
 
-button {
-  padding: 12px 28px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.35s ease;
+button{
+  padding:12px 30px;
+  font-size:16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:transform .35s ease;
 }
 
-#yes { background: #4CAF50; color: white; }
-#no  { background: #f44336; color: white; position: relative; }
+#yes{background:#4CAF50;color:white;}
+#no{background:#f44336;color:white;position:relative;}
 </style>
 </head>
 
@@ -62,17 +63,17 @@ button {
 </div>
 
 <script>
-const questionEl = document.getElementById("question");
-const yesBtn = document.getElementById("yes");
-const noBtn = document.getElementById("no");
-const buttons = document.getElementById("buttons");
-const gameBox = document.getElementById("game");
+const questionEl=document.getElementById("question");
+const yesBtn=document.getElementById("yes");
+const noBtn=document.getElementById("no");
+const buttons=document.getElementById("buttons");
+const game=document.getElementById("game");
 
-let current = "welcome";
-let noClicks = 0;
+let current="welcome";
+let welcomeNoClicks=0;
 
-/* 🔹 STORY (UNCHANGED – ALL PLANNED QUESTIONS) */
-const story = {
+/* 🔹 STORY (UNCHANGED) */
+const story={
   q1:{text:"Did you have fun today?",yes:"q2A",no:"q2B"},
   q2A:{text:"Did you answer everything honestly?",yes:"q3A",no:"q3B"},
   q2B:{text:"Did you answer everything honestly?",yes:"q3C",no:"q3D"},
@@ -112,60 +113,58 @@ const story = {
 
 /* 🔹 RENDER */
 function render(key){
-  current = key;
+  current=key;
 
-  if(key === "welcome"){
-    questionEl.innerHTML = "🎉 <b>Welcome to Jifford GameShow!</b><br>Are you ready to play?";
-    buttons.style.display = "flex";
-    noBtn.style.display = "inline-block";
-    noBtn.style.transform = "translate(0,0)";
-    noClicks = 0;
+  if(key==="welcome"){
+    questionEl.innerHTML="🎉 <b>Welcome to Jifford GameShow!</b><br>Are you ready to play?";
+    buttons.style.display="flex";
+    noBtn.style.display="inline-block";
+    noBtn.style.transform="translate(0,0)";
+    welcomeNoClicks=0;
     return;
   }
 
-  const q = story[key];
-  questionEl.textContent = q.text;
+  const q=story[key];
+  questionEl.textContent=q.text;
+
+  noBtn.style.display="inline-block"; // 🔑 RESET NO
+  noBtn.style.transform="translate(0,0)";
 
   if(q.end){
-    buttons.style.display = "none";
-  } else {
-    buttons.style.display = "flex";
-    noBtn.style.transform = "translate(0,0)";
+    buttons.style.display="none";
+  }else{
+    buttons.style.display="flex";
   }
 }
 
 /* 🔹 YES */
-yesBtn.onclick = ()=>{
+yesBtn.onclick=()=>{
   if(current==="welcome") render("q1");
   else render(story[current].yes);
 };
 
 /* 🔹 NO */
-noBtn.onclick = ()=>{
+noBtn.onclick=()=>{
   if(current==="welcome"){
-    noClicks++;
+    welcomeNoClicks++;
 
-    if(noClicks > 6){
-      noBtn.style.display = "none";
+    if(welcomeNoClicks>=3){
+      noBtn.style.display="none";
       return;
     }
 
-    const box = gameBox.getBoundingClientRect();
-    const yes = yesBtn.getBoundingClientRect();
+    // BIG RANDOM MOVEMENT
+    const maxX=180;
+    const maxY=140;
 
-    let x,y,safe=false,tries=0;
-    while(!safe && tries<50){
-      x = (Math.random()-0.5)*(box.width-120);
-      y = (Math.random()-0.5)*(box.height-160);
-      safe = !(x > yes.left-box.left-60 && x < yes.right-box.left &&
-               y > yes.top-box.top-40 && y < yes.bottom-box.top);
-      tries++;
-    }
+    const x=(Math.random()*maxX*2)-maxX;
+    const y=(Math.random()*maxY*2)-maxY;
+    const r=(Math.random()*30)-15;
 
-    noBtn.style.transform =
-      `translate(${x}px,${y}px) rotate(${Math.random()*20-10}deg)`;
+    noBtn.style.transform=`translate(${x}px,${y}px) rotate(${r}deg)`;
     return;
   }
+
   render(story[current].no);
 };
 
