@@ -54,60 +54,63 @@ button{
 </div>
 
 <script>
-const questionEl=document.getElementById("question");
-const yesBtn=document.getElementById("yes");
-const noBtn=document.getElementById("no");
-const buttons=document.getElementById("buttons");
+const questionEl = document.getElementById("question");
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const buttons = document.getElementById("buttons");
 
-let current="welcome";
-let welcomeNoClicks=0;
+let current = "welcome";
+let welcomeNoClicks = 0;
 
 // Personality points
-let points={love:0,friendship:0,growth:0};
-let q2Index=0;
+let points = { love: 0, friendship: 0, growth: 0 };
+let q2Index = 0;
 
 // Q2 personality test series
-const q2Series=[
+const q2Series = [
   {text:"Do you enjoy spending time with someone you love?",love:1,friendship:0,growth:0},
   {text:"Do you often support your friends in hard times?",love:0,friendship:1,growth:0},
   {text:"Do you like learning new skills even if it’s hard?",love:0,friendship:0,growth:1},
   {text:"Do you prefer romantic gestures over practical help?",love:1,friendship:0,growth:0},
   {text:"Do you enjoy teamwork more than solo work?",love:0,friendship:1,growth:0},
+  {text:"Do you try to improve yourself daily?",love:0,friendship:0,growth:1},
+  {text:"Do you often share kind words with people?",love:1,friendship:1,growth:0}
 ];
 
 // Story paths after personality
-const story={
-// Love path
-"love1":{text:"Have you ever felt your heart race for someone?",yes:"love2",no:"love3"},
-"love2":{text:"Do you believe in love at first sight?",yes:"loveEndA",no:"loveEndB"},
-"love3":{text:"Do you write love messages or letters?",yes:"loveEndC",no:"loveEndD"},
-"loveEndA":{text:"Love is magical 💖",end:true},
-"loveEndB":{text:"Love comes in many forms 🌸",end:true},
-"loveEndC":{text:"Sharing feelings is brave 💌",end:true},
-"loveEndD":{text:"Sometimes love waits 🌹",end:true},
+const story = {
+  // Love path
+  "love1":{text:"Have you ever felt your heart race for someone?",yes:"love2",no:"love3"},
+  "love2":{text:"Do you believe in love at first sight?",yes:"loveEndA",no:"loveEndB"},
+  "love3":{text:"Do you write love messages or letters?",yes:"loveEndC",no:"loveEndD"},
+  "loveEndA":{text:"Love is magical 💖",end:true},
+  "loveEndB":{text:"Love comes in many forms 🌸",end:true},
+  "loveEndC":{text:"Sharing feelings is brave 💌",end:true},
+  "loveEndD":{text:"Sometimes love waits 🌹",end:true},
 
-// Friendship path
-"friendship1":{text:"Do you keep in touch with old friends?",yes:"friendship2",no:"friendship3"},
-"friendship2":{text:"Do you go out of your way to help a friend?",yes:"friendEndA",no:"friendEndB"},
-"friendship3":{text:"Do you enjoy making new friends easily?",yes:"friendEndC",no:"friendEndD"},
-"friendEndA":{text:"True friends are treasures 💎",end:true},
-"friendEndB":{text:"Friendship grows with care 🌿",end:true},
-"friendEndC":{text:"New bonds can be strong 🌟",end:true},
-"friendEndD":{text:"Some friendships fade gently 🌙",end:true},
+  // Friendship path
+  "friendship1":{text:"Do you keep in touch with old friends?",yes:"friendship2",no:"friendship3"},
+  "friendship2":{text:"Do you go out of your way to help a friend?",yes:"friendEndA",no:"friendEndB"},
+  "friendship3":{text:"Do you enjoy making new friends easily?",yes:"friendEndC",no:"friendEndD"},
+  "friendEndA":{text:"True friends are treasures 💎",end:true},
+  "friendEndB":{text:"Friendship grows with care 🌿",end:true},
+  "friendEndC":{text:"New bonds can be strong 🌟",end:true},
+  "friendEndD":{text:"Some friendships fade gently 🌙",end:true},
 
-// Growth path
-"growth1":{text:"Do you reflect on your mistakes?",yes:"growth2",no:"growth3"},
-"growth2":{text:"Do you enjoy challenging tasks?",yes:"growthEndA",no:"growthEndB"},
-"growth3":{text:"Do you read or learn new things every week?",yes:"growthEndC",no:"growthEndD"},
-"growthEndA":{text:"Growth comes from perseverance 📘",end:true},
-"growthEndB":{text:"Even trying matters 🌱",end:true},
-"growthEndC":{text:"Knowledge is power 🔥",end:true},
-"growthEndD":{text:"Every step counts 🐾",end:true}
+  // Growth path
+  "growth1":{text:"Do you reflect on your mistakes?",yes:"growth2",no:"growth3"},
+  "growth2":{text:"Do you enjoy challenging tasks?",yes:"growthEndA",no:"growthEndB"},
+  "growth3":{text:"Do you read or learn new things every week?",yes:"growthEndC",no:"growthEndD"},
+  "growthEndA":{text:"Growth comes from perseverance 📘",end:true},
+  "growthEndB":{text:"Even trying matters 🌱",end:true},
+  "growthEndC":{text:"Knowledge is power 🔥",end:true},
+  "growthEndD":{text:"Every step counts 🐾",end:true}
 };
 
 // Render function
 function render(key){
-  current=key;
+  current = key;
+
   if(key==="welcome"){
     questionEl.innerHTML="🎉 <b>Welcome to Jifford GameShow!</b><br>Are you ready to play?";
     buttons.style.display="flex";
@@ -116,70 +119,79 @@ function render(key){
     welcomeNoClicks=0;
     return;
   }
-  
-  if(key.startsWith("q2")){
-    const q=q2Series[q2Index];
-    questionEl.textContent=q.text;
-    buttons.style.display="flex";
+
+  if(key==="q2"){ // personality test series
+    const q = q2Series[q2Index];
+    questionEl.textContent = q.text;
+    buttons.style.display = "flex";
     return;
   }
 
-  const q=story[key];
-  questionEl.textContent=q.text;
-  if(q.end) buttons.style.display="none";
-  else buttons.style.display="flex";
+  const q = story[key];
+  questionEl.textContent = q.text;
+  if(q.end) buttons.style.display = "none";
+  else buttons.style.display = "flex";
 }
-
-// Yes button
-yesBtn.onclick=()=>{
-  if(current==="welcome") render("q1");
-  else if(current==="q1") render("q2");
-  else if(current.startsWith("q2")){
-    const q=q2Series[q2Index];
-    points.love+=q.love;
-    points.friendship+=q.friendship;
-    points.growth+=q.growth;
-    q2Index++;
-    if(q2Index<q2Series.length) render("q2");
-    else decidePath();
-  } else render(story[current].yes);
-};
-
-// No button
-noBtn.onclick=()=>{
-  if(current==="welcome"){
-    welcomeNoClicks++;
-    if(welcomeNoClicks===4){
-      noBtn.style.transform="translate(500px,-300px)";
-      return;
-    }
-    const positions=[
-      "translate(120px,0)","translate(120px,80px)","translate(-100px,80px)"
-    ];
-    noBtn.style.transform=positions[welcomeNoClicks-1];
-    return;
-  } 
-  else if(current.startsWith("q2")){
-    const q=q2Series[q2Index];
-    points.love+=0;
-    points.friendship+=0;
-    points.growth+=0;
-    q2Index++;
-    if(q2Index<q2Series.length) render("q2");
-    else decidePath();
-  } 
-  else render(story[current].no);
-};
 
 // Decide personality path after Q2 series
 function decidePath(){
-  const maxVal=Math.max(points.love,points.friendship,points.growth);
-  if(points.love===maxVal) render("love1");
-  else if(points.friendship===maxVal) render("friendship1");
+  const maxVal = Math.max(points.love, points.friendship, points.growth);
+  if(points.love === maxVal) render("love1");
+  else if(points.friendship === maxVal) render("friendship1");
   else render("growth1");
 }
 
-// Start
+// YES button
+yesBtn.onclick = () => {
+  if(current === "welcome") {
+    welcomeNoClicks = 0;
+    noBtn.style.transform = "translate(0,0)";
+    render("q2");
+  } else if(current === "q2"){
+    const q = q2Series[q2Index];
+    points.love += q.love;
+    points.friendship += q.friendship;
+    points.growth += q.growth;
+
+    q2Index++;
+    if(q2Index >= q2Series.length){
+      decidePath();
+    } else {
+      render("q2");
+    }
+  } else {
+    render(story[current].yes);
+  }
+};
+
+// NO button
+noBtn.onclick = () => {
+  if(current === "welcome"){
+    welcomeNoClicks++;
+    if(welcomeNoClicks === 4){
+      noBtn.style.transform = "translate(500px,-300px)";
+      return;
+    }
+    const positions = [
+      "translate(120px, 0px)",
+      "translate(120px, 80px)",
+      "translate(-100px, 80px)"
+    ];
+    noBtn.style.transform = positions[welcomeNoClicks-1] || positions[2];
+    return;
+  } else if(current === "q2"){
+    q2Index++;
+    if(q2Index >= q2Series.length){
+      decidePath();
+    } else {
+      render("q2");
+    }
+  } else {
+    render(story[current].no);
+  }
+};
+
+// START
 render("welcome");
 </script>
 </body>
