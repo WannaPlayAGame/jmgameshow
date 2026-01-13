@@ -148,9 +148,10 @@ noBtn.onclick=()=>{
   if(current==="welcome"){
     welcomeNoClicks++;
 
-    if(welcomeNoClicks>=3){
-      noBtn.style.display="none";
-      return;
+    if(welcomeNoClicks===4){
+  // move off-screen instead of disappearing
+  noBtn.style.transform="translate(500px, -300px)";
+  return;
     }
 
     // BIG RANDOM MOVEMENT
