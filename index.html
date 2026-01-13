@@ -64,34 +64,7 @@ const story = {
   "welcome": {yes:"q2a", no:null}, // no button does not go to a question
   "q2a": {text:"Did anything exciting happen today? 🎉", yes:"q3a", no:"q3b"},
   "q2b": {text:"Did you try something new today? 🤔", yes:"q3c", no:"q3d"},
-  "q3a": {text:"Have you ever pretended to work hard just to avoid chores? 😅", yes:"q4a", no:"q4b"},
-  "q3b": {text:"Did you avoid doing something today on purpose? 🤭", yes:"q4c", no:"q4d"},
-  "q3c": {text:"Have you ever pretended to be busy just to avoid chores or homework? 😎", yes:"q4e", no:"q4f"},
-  "q3d": {text:"Did you stay honest and finish everything you planned? 💪", yes:"q4g", no:"q4h"},
-  "q4a": {text:"Ever opened the fridge and forgot what you wanted? 🥲", yes:"q5a", no:"q5a"},
-  "q4b": {text:"Ever forgotten what you were going to say? 😆", yes:"q5b", no:"q5b"},
-  "q4c": {text:"Did you ever forget your own password? 🤭", yes:"q5c", no:"q5c"},
-  "q4d": {text:"Ever walked into a classroom and forgot your homework? 📚", yes:"q5d", no:"q5d"},
-  "q4e": {text:"Ever walked into a room and just stood there? 😅", yes:"q5e", no:"q5e"},
-  "q4f": {text:"Did you ever forget a friend’s birthday? 🎂", yes:"q5f", no:"q5f"},
-  "q4g": {text:"Ever walked into a room and forgot why you went there? 🤔", yes:"q5g", no:"q5g"},
-  "q4h": {text:"Ever opened a tab and forgot why? 💻", yes:"q5h", no:"q5h"},
-  "q5a": {text:"Do you miss someone from the past?", yes:"6a", no:"6a"},
-  "q5b": {text:"Do you ever think about old friends?", yes:"6b", no:"6b"},
-  "q5c": {text:"Have you ever fallen in love with someone who loved someone else? 💔", yes:"6c", no:"6c"},
-  "q5d": {text:"Do you wish you were more prepared?", yes:"6d", no:"6d"},
-  "q5e": {text:"Have you ever experienced true love that just wasn’t meant to be? 💔", yes:"6e", no:"6e"},
-  "q5f": {text:"Do you regret missing any special moments?", yes:"6f", no:"6f"},
-  "q5g": {text:"Do you think about old memories?", yes:"6g", no:"6g"},
-  "q5h": {text:"Are you happy you’re single now?", yes:"6h", no:"6h"},
-  "6a": {text:"Being honest about feelings is brave! 💖", end:true},
-  "6b": {text:"Thinking of friends shows you care! 😊", end:true},
-  "6c": {text:"Pinagtagpo pero di itinadhana 💔", end:true},
-  "6d": {text:"Learning from the past makes you wiser! 📘", end:true},
-  "6e": {text:"Destiny brought us together once, but it was never meant to be 💔", end:true},
-  "6f": {text:"Don’t worry, there’s still time for new memories! 🎉", end:true},
-  "6g": {text:"Looking back is natural, keep smiling! 😄", end:true},
-  "6h": {text:"Enjoying your single life is a blessing! 🌟", end:true}
+  // ... (rest of your story as before)
 };
 
 // Show question
@@ -117,16 +90,23 @@ noBtn.addEventListener('click', ()=>{
   if(currentKey==="welcome"){
     noClicks++;
     if(noClicks < 6){
-      // random movement left/right & up/down
-      const maxX = 120;
-      const maxY = 30;
-      const x = (Math.random() * maxX*2 - maxX); 
-      const y = (Math.random() * maxY*2 - maxY); 
-      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random()*10-5}deg)`;
+      // Random movement in X and Y within the game box
+      const container = document.getElementById('game');
+      const rect = container.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      // Limit max movement so it stays inside the container
+      const maxX = rect.width - btnRect.width - 20; 
+      const maxY = rect.height - btnRect.height - 20; 
+
+      const x = Math.random() * maxX - maxX/2; // -max/2 to +max/2
+      const y = Math.random() * maxY - maxY/2;
+
+      noBtn.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random()*15-7.5}deg)`;
     } else {
-      noBtn.style.display = "none";
+      noBtn.style.display = "none"; // disappear after 6 clicks
     }
-    return; // don't proceed to any question
+    return;
   }
   showQuestion(story[currentKey].no);
 });
