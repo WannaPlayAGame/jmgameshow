@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jifford GameShow</title>
-
 <style>
 body{
   font-family: Arial, sans-serif;
@@ -14,7 +13,6 @@ body{
   align-items:center;
   min-height:100vh;
 }
-
 #game{
   width:100%;
   max-width:480px;
@@ -26,19 +24,17 @@ body{
   position:relative;
   overflow:hidden;
 }
-
 #question{
   font-size:20px;
+  margin-bottom:20px;
 }
-
 #buttons{
   display:flex;
   justify-content:center;
   gap:25px;
-  margin-top:30px;
+  margin-top:20px;
   position:relative;
 }
-
 button{
   padding:12px 30px;
   font-size:16px;
@@ -47,12 +43,10 @@ button{
   cursor:pointer;
   transition:transform .35s ease;
 }
-
 #yes{background:#4CAF50;color:white;}
 #no{background:#f44336;color:white;position:relative;}
 </style>
 </head>
-
 <body>
 <div id="game">
   <div id="question"></div>
@@ -63,69 +57,88 @@ button{
 </div>
 
 <script>
-const questionEl=document.getElementById("question");
-const yesBtn=document.getElementById("yes");
-const noBtn=document.getElementById("no");
-const buttons=document.getElementById("buttons");
+const questionEl = document.getElementById("question");
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const buttons = document.getElementById("buttons");
 
-let current="welcome";
-let noClicks=0;
+let current = "welcome";
+let welcomeNoClicks = 0;
+let path = ""; // love / friendship / growth
 
-/* 🔹 STORY (UNCHANGED) */
-const story={
-  q1:{text:"Did you have fun today?",yes:"q2A",no:"q2B"},
-  q2A:{text:"Did you answer everything honestly?",yes:"q3A",no:"q3B"},
-  q2B:{text:"Did you answer everything honestly?",yes:"q3C",no:"q3D"},
+/* 🔹 STORY OBJECT */
+const story = {
+  // Q1 Start
+  q1: {text:"Did you have fun today?", yes:"q2-1", no:"q2-1"},
+  
+  // Q2 Personality Series (decides path)
+  "q2-1": {text:"Do you enjoy helping others without being asked?", yes:"q2-2a", no:"q2-2b"},
+  "q2-2a": {text:"Do you think about someone special often?", yes:"q3-love-1", no:"q3-friend-1"},
+  "q2-2b": {text:"Do you prefer spending time alone or with close friends?", yes:"q3-growth-1", no:"q3-friend-1"},
+  
+  // LOVE PATH Q3-Q10
+  "q3-love-1": {text:"Do you get nervous when talking to someone you like?", yes:"q4-love-1", no:"q4-love-2"},
+  "q4-love-1": {text:"Have you ever written a love message but never sent it?", yes:"q5-love-1", no:"q5-love-2"},
+  "q4-love-2": {text:"Do you dream about someone secretly?", yes:"q5-love-2", no:"q5-love-3"},
+  "q5-love-1": {text:"Would you risk embarrassment for love?", yes:"end-love-a", no:"end-love-b"},
+  "q5-love-2": {text:"Do you believe in love at first sight?", yes:"end-love-c", no:"end-love-d"},
+  "q5-love-3": {text:"Do you like giving surprise gifts to someone special?", yes:"end-love-e", no:"end-love-f"},
+  
+  // FRIENDSHIP PATH Q3-Q10
+  "q3-friend-1": {text:"Do you enjoy cheering up your friends?", yes:"q4-friend-1", no:"q4-friend-2"},
+  "q4-friend-1": {text:"Would you defend a friend even if it’s risky?", yes:"q5-friend-1", no:"q5-friend-2"},
+  "q4-friend-2": {text:"Do you feel happy when friends succeed?", yes:"q5-friend-2", no:"q5-friend-3"},
+  "q5-friend-1": {text:"Do you miss friends from the past?", yes:"end-friend-a", no:"end-friend-b"},
+  "q5-friend-2": {text:"Do you enjoy spending time in group activities?", yes:"end-friend-c", no:"end-friend-d"},
+  "q5-friend-3": {text:"Do you keep secrets for your friends?", yes:"end-friend-e", no:"end-friend-f"},
+  
+  // GROWTH PATH Q3-Q10
+  "q3-growth-1": {text:"Do you like learning new things about yourself?", yes:"q4-growth-1", no:"q4-growth-2"},
+  "q4-growth-1": {text:"Do you set personal goals regularly?", yes:"q5-growth-1", no:"q5-growth-2"},
+  "q4-growth-2": {text:"Do you enjoy reflecting on your mistakes?", yes:"q5-growth-2", no:"q5-growth-3"},
+  "q5-growth-1": {text:"Do you feel proud when achieving something alone?", yes:"end-growth-a", no:"end-growth-b"},
+  "q5-growth-2": {text:"Do you enjoy solving problems yourself?", yes:"end-growth-c", no:"end-growth-d"},
+  "q5-growth-3": {text:"Do you like improving your skills daily?", yes:"end-growth-e", no:"end-growth-f"},
+  
+  // ENDINGS
+  "end-love-a": {text:"Love is brave 💖", end:true},
+  "end-love-b": {text:"Sometimes love waits 💔", end:true},
+  "end-love-c": {text:"Love at first sight is magical ✨", end:true},
+  "end-love-d": {text:"Love grows in time 💌", end:true},
+  "end-love-e": {text:"Small gestures show big love ❤️", end:true},
+  "end-love-f": {text:"Even secret love has its charm 💕", end:true},
 
-  q3A:{text:"Have you ever pretended to be busy to avoid chores?",yes:"q4A",no:"q4B"},
-  q3B:{text:"Do you enjoy procrastinating sometimes?",yes:"q4C",no:"q4D"},
-  q3C:{text:"Do you try to finish tasks immediately?",yes:"q4E",no:"q4F"},
-  q3D:{text:"Do you reflect on your actions daily?",yes:"q4G",no:"q4H"},
+  "end-friend-a": {text:"Friendship lasts a lifetime 😊", end:true},
+  "end-friend-b": {text:"Distance can't break true bonds 🌟", end:true},
+  "end-friend-c": {text:"Being there for friends is priceless 💛", end:true},
+  "end-friend-d": {text:"Sometimes friends need space 🤝", end:true},
+  "end-friend-e": {text:"Keeping secrets builds trust 🔒", end:true},
+  "end-friend-f": {text:"Friendship needs effort to grow 🌱", end:true},
 
-  q4A:{text:"Ever opened the fridge and forgot why?",yes:"q5A",no:"q5A"},
-  q4B:{text:"Ever forgotten what you were about to say?",yes:"q5B",no:"q5B"},
-  q4C:{text:"Ever forgotten a password?",yes:"q5C",no:"q5C"},
-  q4D:{text:"Forgot homework at school?",yes:"q5D",no:"q5D"},
-  q4E:{text:"Ever walked into a room and froze?",yes:"q5E",no:"q5E"},
-  q4F:{text:"Forgot a friend's birthday?",yes:"q5F",no:"q5F"},
-  q4G:{text:"Forgot why you entered a room?",yes:"q5G",no:"q5G"},
-  q4H:{text:"Opened a tab and forgot why?",yes:"q5H",no:"q5H"},
-
-  q5A:{text:"Do you miss someone from the past?",yes:"endA",no:"endA"},
-  q5B:{text:"Do you think of old friends?",yes:"endB",no:"endB"},
-  q5C:{text:"Loved someone who loved someone else?",yes:"endC",no:"endC"},
-  q5D:{text:"Wish you were more prepared?",yes:"endD",no:"endD"},
-  q5E:{text:"Loved someone not meant for you?",yes:"endE",no:"endE"},
-  q5F:{text:"Regret missing moments?",yes:"endF",no:"endF"},
-  q5G:{text:"Think about old memories?",yes:"endG",no:"endG"},
-  q5H:{text:"Happy being single?",yes:"endH",no:"endH"},
-
-  endA:{text:"Being honest is brave 💖",end:true},
-  endB:{text:"You care deeply 😊",end:true},
-  endC:{text:"Pinagtagpo pero di itinadhana 💔",end:true},
-  endD:{text:"Lessons make you wiser 📘",end:true},
-  endE:{text:"Not all love stays 💔",end:true},
-  endF:{text:"More memories await 🎉",end:true},
-  endG:{text:"Looking back is human 😄",end:true},
-  endH:{text:"Freedom is beautiful 🌟",end:true}
+  "end-growth-a": {text:"Personal growth is empowering 🌟", end:true},
+  "end-growth-b": {text:"Reflection brings wisdom 📘", end:true},
+  "end-growth-c": {text:"Problem-solving makes you stronger 💪", end:true},
+  "end-growth-d": {text:"Learning from mistakes is key 📖", end:true},
+  "end-growth-e": {text:"Daily improvement is success 🔥", end:true},
+  "end-growth-f": {text:"Even small progress counts 🏆", end:true},
 };
 
 /* 🔹 RENDER */
 function render(key){
   current=key;
 
+  // Welcome section
   if(key==="welcome"){
     questionEl.innerHTML="🎉 <b>Welcome to Jifford GameShow!</b><br>Are you ready to play?";
     buttons.style.display="flex";
     noBtn.style.display="inline-block";
     noBtn.style.transform="translate(0,0)";
-    noClicks=0;
+    welcomeNoClicks=0;
     return;
   }
 
-  const q=story[key];
-  questionEl.textContent=q.text;
-
+  const q = story[key];
+  questionEl.textContent = q.text;
   noBtn.style.display="inline-block";
   noBtn.style.transform="translate(0,0)";
 
@@ -137,33 +150,32 @@ function render(key){
 }
 
 /* 🔹 YES */
-yesBtn.onclick=()=>{
+yesBtn.onclick = () => {
   if(current==="welcome") render("q1");
   else render(story[current].yes);
 };
 
-/* 🔹 NO (WELCOME FIXED ONLY) */
-noBtn.onclick=()=>{
-  if (current === "welcome") {
-    noClicks++;
+/* 🔹 NO */
+noBtn.onclick = () => {
+  if(current==="welcome"){
+    welcomeNoClicks++;
 
-    if (noClicks === 1) {
-      noBtn.style.transform = "translate(120px, 0)";
-    } 
-    else if (noClicks === 2) {
-      noBtn.style.transform = "translate(120px, 80px)";
-    } 
-    else if (noClicks === 3) {
-      noBtn.style.transform = "translate(-100px, 80px)";
-    } 
-    else if (noClicks === 4) {
+    if(welcomeNoClicks===4){
       // guaranteed exit on 4th tap
-      noBtn.style.transform = "translate(600px, -400px)";
+      noBtn.style.transform="translate(500px, -300px)";
+      return;
     }
 
+    // BIG movement for No button
+    const moves = [
+      {x: 120, y:0},
+      {x: 120, y:80},
+      {x: -100, y:80}
+    ];
+    const move = moves[welcomeNoClicks-1] || {x:0, y:0};
+    noBtn.style.transform=`translate(${move.x}px, ${move.y}px)`;
     return;
   }
-
   render(story[current].no);
 };
 
